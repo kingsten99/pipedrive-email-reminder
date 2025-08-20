@@ -1,0 +1,23 @@
+{
+  "app": {
+    "port": 3000,
+    "env": "development"
+  },
+  "pipedrive": {
+    "apiKey": "YOUR_PIPEDRIVE_API_KEY",
+    "baseUrl": "https://api.pipedrive.com/v1"
+  },
+  "email": {
+    "service": "YOUR_EMAIL_SERVICE",
+    "user": "YOUR_EMAIL_USER",
+    "pass": "YOUR_EMAIL_PASSWORD"
+  },
+  "jwt": {
+    "secret": "YOUR_JWT_SECRET",
+    "expiresIn": "1h"
+  },
+  "reminder": {
+    "subject": "Reminder: Action Required",
+    "from": "no-reply@yourdomain.com"
+  }
+}

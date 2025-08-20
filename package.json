@@ -1,0 +1,35 @@
+{
+  "name": "pipedrive-email-reminder",
+  "version": "1.0.0",
+  "description": "A Node.js application for sending reminder emails to managers, employees, and trainers using Pipedrive.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.4",
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.21.2",
+    "handlebars": "^4.7.8",
+    "jsonwebtoken": "^8.5.1",
+    "node-cron": "^4.2.1",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^6.10.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "keywords": [
+    "email",
+    "reminder",
+    "pipedrive",
+    "nodejs"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
