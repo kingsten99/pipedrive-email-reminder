@@ -1,6 +1,18 @@
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
+
 class EmailService {
-    constructor(mailService) {
-        this.mailService = mailService;
+    constructor() {
+        this.transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_SERVICE_USER,
+                pass: process.env.EMAIL_SERVICE_PASSWORD
+            }
+        });
     }
 
     constructEmailContent(template, data) {
@@ -48,21 +60,32 @@ class EmailService {
                 subject = 'Reminder for Trainers';
                 break;
             default:
-                throw new Error('Invalid role specified');
+                template = '<p>Hello, this is a reminder.</p>';
+                subject = 'Reminder';
         }
 
-        const actionButtonHtml = await this.loadActionButton(actionUrl);
-        const emailContent = this.constructEmailContent(template, { actionButton: actionButtonHtml });
+        // Replace {{actionUrl}} in template if present
+        const htmlContent = template.replace('{{actionUrl}}', actionUrl);
 
-        await this.sendEmail(to, subject, emailContent);
+        // Send email
+        await this.transporter.sendMail({
+            from: process.env.EMAIL_SERVICE_USER,
+            to,
+            subject,
+            html: htmlContent
+        });
+
+        console.log(`Email sent to ${to} with subject "${subject}"`);
     }
 
     async loadTemplate(templateName) {
-        // Load the HTML template from the file system
-        const fs = require('fs').promises;
+        const fs = require('fs');
         const path = require('path');
-        const templatePath = path.join(__dirname, '../templates/emails', templateName);
-        return await fs.readFile(templatePath, 'utf-8');
+        const templatePath = path.join(__dirname, '..', 'templates', 'emails', templateName);
+        if (fs.existsSync(templatePath)) {
+            return fs.readFileSync(templatePath, 'utf8');
+        }
+        return '<p>Hello, this is a reminder.</p>';
     }
 
     async loadActionButton(actionUrl) {

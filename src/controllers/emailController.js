@@ -3,7 +3,8 @@ const debug = (label, obj) => {
 }
 
 const PipedriveService = require('../services/pipedriveService');
-const emailService = require('../services/emailService');
+const EmailService = require('../services/emailService');
+const emailService = new EmailService();
 const pipedrive = new PipedriveService(process.env.PIPEDRIVE_API_TOKEN);
 
 class EmailController {
@@ -68,28 +69,20 @@ module.exports = {
   // Handler invoked by webhook router. Called with req.body in current router.
   // Implement fetching full object via PipedriveService and triggering emails here.
   handlePipedriveWebhook: async (body) => {
-    // Get deal info from webhook payload
     const deal = body?.data;
     if (!deal) return;
 
-    // Get owner info (you may need to fetch user details if you want their email)
     const ownerId = deal.owner_id;
     let ownerEmail = null;
 
-    // Fetch owner details from Pipedrive API
     if (ownerId) {
       const owner = await pipedrive.getUserById(ownerId);
       ownerEmail = owner?.email;
     }
 
-    // Send email if owner email is found
     if (ownerEmail) {
-      await emailService.sendReminderEmail({
-        to: ownerEmail,
-        subject: `New Deal Created: ${deal.title}`,
-        templateName: 'reminder_manager.html',
-        context: { name: deal.title }
-      });
+      const actionUrl = `${process.env.FRONTEND_URL || 'https://your-frontend-url.com'}/deal/${deal.id}`;
+      await emailService.sendReminderEmail(ownerEmail, 'manager', actionUrl);
       console.log(`Email sent to ${ownerEmail} for deal "${deal.title}"`);
     } else {
       console.log('No owner email found for deal:', deal.title);
